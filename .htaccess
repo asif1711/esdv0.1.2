@@ -1,0 +1,6 @@
+# Enable rewrite engine
+RewriteEngine On
+
+# Set the default landing page to login.html
+DirectoryIndex login.php
+
