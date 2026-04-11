@@ -1,4 +1,9 @@
 <?php
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+header('Content-Type: text/plain');
+
 require 'vendor/autoload.php';
 use Twilio\Rest\Client;
 use Dotenv\Dotenv;
