@@ -1,16 +1,7 @@
 <?php
 session_start();
 
-$host = 'localhost';
-$user = 'root';
-$password = '';
-$dbname = 'vips';
-
-$conn = new mysqli($host, $user, $password, $dbname);
-
-if ($conn->connect_error) {
-    die('Connection failed: ' . $conn->connect_error);
-}
+require 'db.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = mysqli_real_escape_string($conn, trim($_POST['email']));
@@ -18,12 +9,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = mysqli_real_escape_string($conn, trim($_POST['password']));
 
     if (empty($email) || empty($name) || empty($password)) {
-        echo "<script>alert('All fields are required.'); window.location.href = 'signup.html';</script>";
+        echo "<script>alert('All fields are required.'); window.location.href = 'signup.php';</script>";
         exit();
     }
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo "<script>alert('Invalid email format.'); window.location.href = 'signup.html';</script>";
+        echo "<script>alert('Invalid email format.'); window.location.href = 'signup.php';</script>";
         exit();
     }
 
@@ -31,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
-        echo "<script>alert('Email is already registered.'); window.location.href = 'signup.html';</script>";
+        echo "<script>alert('Email is already registered.'); window.location.href = 'signup.php';</script>";
         exit();
     }
 
@@ -40,9 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $sql = "INSERT INTO users (email, name, password) VALUES ('$email', '$name', '$hashed_password')";
 
     if ($conn->query($sql) === TRUE) {
-        echo "<script>alert('Registration successful. Please log in.'); window.location.href = 'login.html';</script>";
+        echo "<script>alert('Registration successful. Please log in.'); window.location.href = 'login.php';</script>";
     } else {
-        echo "<script>alert('Error: ' . $conn->error); window.location.href = 'signup.html';</script>";
+        echo "<script>alert('Error: ' . $conn->error); window.location.href = 'signup.php';</script>";
     }
 }
 

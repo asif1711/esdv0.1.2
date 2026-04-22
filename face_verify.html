@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OnlyYou | Face Verification</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+</head>
+
+<body>
+
+<section class="auth">
+  <div class="auth__container">
+
+    <!-- LEFT SIDE -->
+    <div class="auth__left">
+      <div class="brand">
+        <img src="img/logo.png" class="brand__logo--large" />
+        <p class="brand__tagline">Secure access. Only you.</p>
+      </div>
+    </div>
+
+    <!-- RIGHT SIDE -->
+    <div class="auth__right">
+      <div class="auth__card">
+        <h2>Face Verification</h2>
+
+        <div class="divider"></div>
+
+        <p style="text-align:center; margin-bottom:15px;">
+          Please verify your identity using your face
+        </p>
+
+        <!-- Video Preview -->
+        <div style="text-align:center;">
+            <video id="video" width="300" autoplay style="border-radius:10px;"></video>
+        </div>
+
+        <p id="status" style="text-align:center; margin-top:15px; font-weight:600;"></p>
+
+        <button onclick="capture()" id="verifyBtn">
+            <span class="btn-text">Verify Face</span>
+        </button>
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+const video = document.getElementById('video');
+const statusText = document.getElementById('status');
+const btn = document.getElementById('verifyBtn');
+
+// open camera
+navigator.mediaDevices.getUserMedia({ video: true })
+.then(stream => {
+    video.srcObject = stream;
+})
+.catch(err => {
+    statusText.innerText = "Camera access denied ❌";
+});
+
+// capture and send
+function capture() {
+    btn.innerText = "Verifying...";
+    btn.disabled = true;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = 300;
+    canvas.height = 200;
+
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, 300, 200);
+
+    canvas.toBlob(blob => {
+        const formData = new FormData();
+        formData.append("image", blob);
+
+        fetch("http://127.0.0.1:5000/verify", {
+            method: "POST",
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+
+            if (data.status === "granted") {
+                statusText.style.color = "green";
+                statusText.innerText = "Face Verified ✅";
+
+                setTimeout(() => {
+                    window.location.href = "verify.html"; // OTP page
+                }, 1000);
+
+            } else {
+                console.log(data);
+                statusText.style.color = "red";
+                statusText.innerText = "Face Not Recognized ❌";
+
+                btn.innerText = "Try Again";
+                btn.disabled = false;
+            }
+
+        })
+        .catch(err => {
+            console.error(err);
+            statusText.innerText = "Server error ❌";
+            btn.disabled = false;
+        });
+    });
+}
+</script>
+
+</body>
+</html>

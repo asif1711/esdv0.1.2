@@ -2,15 +2,7 @@
 session_start();
 
 // DB connection
-$host = 'localhost';
-$user = 'root';
-$password = '';
-$dbname = 'vips';
-
-$conn = new mysqli($host, $user, $password, $dbname);
-if ($conn->connect_error) {
-    die('Connection failed: ' . $conn->connect_error);
-}
+require 'db.php';
 
 $error_message = '';
 
@@ -31,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_email'] = $user['email'];
 
-            header('Location: /esd/index.php');
+            header('Location: /esd/face_verify.html');
             exit();
         } else {
             $error_message = "Incorrect password.";

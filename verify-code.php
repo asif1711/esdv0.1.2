@@ -2,17 +2,7 @@
 header('Content-Type: application/json');
 
 // Database connection
-$host = 'localhost';
-$db = 'vips';
-$user = 'root';
-$pass = ''; // Update if your DB has a password
-$conn = new mysqli($host, $user, $pass, $db);
-
-if ($conn->connect_error) {
-    http_response_code(500);
-    echo json_encode(['message' => 'Database connection failed']);
-    exit();
-}
+require 'db.php';
 
 // Accept only POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
