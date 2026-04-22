@@ -81,7 +81,7 @@ def verify():
         print(f"Detected: {name}, Confidence: {confidence}")
 
         # 🔐 Adjust threshold if needed
-        if confidence < 55:
+        if confidence < 80:
             return jsonify({
                 "status": "granted",
                 "user": name,
