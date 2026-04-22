@@ -88,13 +88,9 @@ if (!isset($_SESSION['user_id'])) {
       <p>With Adam Cooper, Lead Product Designer</p>
 
       <a href="event.php" class="btn-primary">
-        Join Event
-        <span class="btn-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24">
-            <path d="M5 12H19M19 12L13 6M19 12L13 18"
-              stroke="white" stroke-width="2"
-              stroke-linecap="round"/>
-          </svg>
+        <span class="btn-text">Access Ticket</span>
+        <span class="btn-edge-icon">
+            <img src="img/arrow-2.svg" alt="">
         </span>
       </a>
     </div>
@@ -154,39 +150,6 @@ if (!isset($_SESSION['user_id'])) {
   </div>
 </section>
 <!-- Product Section End -->
-
-<!-- Footer Section Begin -->
-<footer class="footer">
-    <div class="page-up">
-        <a href="#" id="scrollToTopButton"><span class="arrow_carrot-up"></span></a>
-    </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-3">
-                <div class="footer__logo">
-                    <a href="index.php"><img src="img/logo.png" alt=""></a>
-                </div>
-            </div>
-            <div class="col-lg-6">
-                <div class="footer__nav">
-                    <ul>
-                        <li class="active"><a href="index.php">Homepage</a></li>
-                        <li><a href="./categories.html">Categories</a></li>
-                        <li><a href="./blog.html">Our Blog</a></li>
-                        <li><a href="#">Contacts</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-lg-3">
-                <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                  Copyright &copy;<script>document.write(new Date().getFullYear());</script> Designed <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Noodlez000</a>
-                  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
-
-              </div>
-          </div>
-      </div>
-  </footer>
-  <!-- Footer Section End -->
 
   <!-- Search model Begin -->
   <div class="search-model">

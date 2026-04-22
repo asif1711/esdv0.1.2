@@ -68,7 +68,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(1.05);
+  transform: scale(1);
 }
 
 /* Overlay */
@@ -126,34 +126,127 @@
 ======================================== */
 
 .btn-primary {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  min-width: 220px;
+  justify-content: space-between;
+  min-width: unset;
+  width: auto;
+  padding: 14px 18px 14px 24px;
   gap: 10px;
 
-  padding: 16px 32px;
   border-radius: 10px;
 
-  background: linear-gradient(135deg, #FF3B3B, #ff6b6b);
+  /* 🔴 NOW PRIMARY RED */
+  background: linear-gradient(135deg, #FF3B3B, #b91c1c);
   color: white;
+
   font-weight: 600;
   font-size: 16px;
 
   text-decoration: none;
-  transition: 0.3s ease;
+
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: 0 8px 20px rgba(255, 59, 59, 0.35);
+
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+
+  transition: all 0.3s ease;
 }
 
+.btn-text {
+  position: relative;
+  z-index: 2;
+}
+
+.btn-edge-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+
+  border-radius: 8px;
+
+  
+
+  position: relative;
+  z-index: 2;
+
+  transition: all 0.3s ease;
+}
+
+.btn-edge-icon img {
+  width: 24px;
+  height: 24px;
+  filter: brightness(0) invert(1);
+  transition: transform 0.3s ease;
+}
+
+.btn-primary:hover .btn-edge-icon {
+  transform: translateX(20px);
+}
+
+.btn-primary::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  /* 🔵 your original dark theme */
+  background: linear-gradient(135deg, #070720, #0b0c2a);
+
+  transform: translateX(-100%);
+  transition: transform 0.4s ease;
+
+  z-index: -1;
+}
+
+.btn-primary:hover::before {
+  transform: translateX(0);
+}
+
+
+/* 🔴 HOVER → RED GRADIENT */
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(255,59,59,0.3);
+
+  box-shadow: 
+    0 10px 25px rgba(0,0,0,0.5),
+    0 0 10px rgba(255,255,255,0.05);
 }
 
-.btn-icon {
-  transition: transform 0.3s ease;
+/* 👇 CLICK FEEDBACK */
+.btn-primary:active {
+  transform: translateY(1px) scale(0.98);
+
+  box-shadow:
+    0 4px 12px rgba(255, 59, 59, 0.3),
+    inset 0 0 8px rgba(0,0,0,0.4);
 }
 
 .btn-primary:hover .btn-icon {
   transform: translateX(6px);
+}
+
+.btn-primary:hover::before {
+  transform: translateX(0); /* sweep across */
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(255, 59, 59, 0.3);
+}
+
+.btn-primary > * {
+  position: relative;
+  z-index: 2;
+}
+
+.btn-primary:active {
+  transform: scale(0.97);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
 }
 
 /* ========================================
@@ -165,7 +258,7 @@
   gap: 20px;
 
   padding: 20px 80px;
-  margin-top: -110px;
+  margin-top: -150px;
 
   position: relative;
   z-index: 2;
