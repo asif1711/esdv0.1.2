@@ -1,0 +1,79 @@
+if (user == 2 && position == perfect){
+    min attempts = 2
+    max performance = 66 confidence
+    min performance = 87 confidence
+} else{
+    if (user == 2 && position!=perfect){
+        max performance = 80.60
+        min performance = 113
+    }
+
+    if (user == 2 && (head is tilted || orientation is not aligned)){
+        no face detected
+    }
+
+    if (different user detected){
+        7 out of 13 times
+    } else (user detected correctly (6 out of 13 times)) {
+        max = 80    
+        min = 99
+    }
+
+if(user 2 is scanning && it fails the scan then it shows user 1 more oftenly in the server.py console)
+
+}
+
+if (distance is approximately 20-10 cm or closer){
+    accuracy increases and recognition happens
+}
+
+
+if (user == 1 && position == perfect){
+    min attempts = 1
+    max performance = 57 confidence
+    min performance = 71 confidence
+}else{
+    if (position!=perfect){
+        min attempts = 3
+        max performance = 72.96 confidence
+        min performance = 134 confidence
+    }
+
+    if (user == 1 && (head is tilted || orientation is not aligned)){
+        no face detected
+        max = 70.62
+        min = 126
+    }
+
+    if(user 1 is not scanning his/her face and user 3 is scanning then it shows user 2 only once in the server.py console)
+}
+
+
+
+🔹 python version : 3.10.11
+
+🔹 Python (Face Recognition backend)
+Core:
+flask → API server
+opencv-python (cv2) → face detection
+numpy → image processing
+Pillow (PIL) → image handling
+flask-cors → frontend connection
+🔹 Optional / sometimes used
+
+(depends on your code)
+
+os (built-in)
+json (built-in)
+🔹 PHP side (your website)
+mysqli → DB connection
+vlucas/phpdotenv → .env
+twilio/sdk → OTP system
+
+
+
+Flask==3.1.3
+flask-cors==6.0.2
+numpy==2.2.6
+opencv-contrib-python==4.13.0.92
+pillow==12.2.0

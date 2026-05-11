@@ -43,8 +43,10 @@ for person in os.listdir(dataset_path):
 
 # train only if data exists
 if len(faces) == 0:
-    print("❌ No dataset found. Please add images first.")
+    print("❌ No dataset found. Resetting model...")
+    recognizer = cv2.face.LBPHFaceRecognizer_create()  # 🔥 RESET
 else:
+    recognizer = cv2.face.LBPHFaceRecognizer_create()  # fresh
     recognizer.train(faces, np.array(labels))
     print("✅ Model trained successfully!")
 
