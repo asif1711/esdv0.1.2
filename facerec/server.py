@@ -3,63 +3,55 @@ from flask_cors import CORS
 import cv2
 import numpy as np
 import os
-from PIL import Image
 
 app = Flask(__name__)
-CORS(app)  # allow frontend (PHP/HTML) to call API
+CORS(app)
 
-# ===== TRAIN MODEL =====
-dataset_path = "dataset"
+# ===== PATHS =====
+MODEL_PATH = "trainer.yml"
+LABELS_PATH = "labels.npy"
 
 recognizer = cv2.face.LBPHFaceRecognizer_create()
-
-faces = []
-labels = []
 label_map = {}
-current_label = 0
+model_trained = False
 
-for person in os.listdir(dataset_path):
-    person_path = os.path.join(dataset_path, person)
+# ===== LOAD MODEL =====
+def load_model():
+    global recognizer, label_map, model_trained
 
-    if not os.path.isdir(person_path):
-        continue
+    if os.path.exists(MODEL_PATH) and os.path.exists(LABELS_PATH):
+        recognizer.read(MODEL_PATH)
+        label_map = np.load(LABELS_PATH, allow_pickle=True).item()
+        model_trained = True
+        print("✅ Model loaded successfully!")
+    else:
+        model_trained = False
+        print("❌ No trained model found")
 
-    label_map[current_label] = person
-
-    for img_name in os.listdir(person_path):
-        img_path = os.path.join(person_path, img_name)
-
-        try:
-            img = Image.open(img_path).convert('L')
-        except:
-            continue
-
-        img_np = np.array(img, 'uint8')
-
-        faces.append(img_np)
-        labels.append(current_label)
-
-    current_label += 1
-
-# train only if data exists
-if len(faces) == 0:
-    print("❌ No dataset found. Resetting model...")
-    recognizer = cv2.face.LBPHFaceRecognizer_create()  # 🔥 RESET
-else:
-    recognizer = cv2.face.LBPHFaceRecognizer_create()  # fresh
-    recognizer.train(faces, np.array(labels))
-    print("✅ Model trained successfully!")
+# Load at startup
+load_model()
 
 # ===== FACE DETECTOR =====
 faceCascade = cv2.CascadeClassifier(
     cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
 )
 
-# ===== API ROUTE =====
+# ===== VERIFY ROUTE =====
 @app.route('/verify', methods=['POST'])
 def verify():
+
+    # 🔴 No model
+    if not model_trained:
+        return jsonify({
+            "status": "error",
+            "message": "No trained model available"
+        }), 200
+
     if 'image' not in request.files:
-        return jsonify({"status": "error", "message": "No image uploaded"})
+        return jsonify({
+            "status": "error",
+            "message": "No image uploaded"
+        }), 200
 
     file = request.files['image']
 
@@ -68,31 +60,74 @@ def verify():
     img = cv2.imdecode(npimg, cv2.IMREAD_COLOR)
 
     if img is None:
-        return jsonify({"status": "error", "message": "Invalid image"})
+        return jsonify({
+            "status": "error",
+            "message": "Invalid image"
+        }), 200
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces_detected = faceCascade.detectMultiScale(gray, 1.3, 5)
+    faces = faceCascade.detectMultiScale(gray, 1.3, 5)
 
-    if len(faces_detected) == 0:
-        return jsonify({"status": "denied", "message": "No face detected"})
+    if len(faces) == 0:
+        return jsonify({
+            "status": "denied",
+            "user": "Unknown",
+            "message": "No face detected"
+        }), 200
 
-    for (x, y, w, h) in faces_detected:
-        label, confidence = recognizer.predict(gray[y:y+h, x:x+w])
+    # 🎯 Thresholds
+    ACCEPT_THRESHOLD = 75
+    REJECT_THRESHOLD = 90
+
+    for (x, y, w, h) in faces:
+        try:
+            label, confidence = recognizer.predict(gray[y:y+h, x:x+w])
+        except:
+            return jsonify({
+                "status": "error",
+                "message": "Model error"
+            }), 200
+
         name = label_map.get(label, "Unknown")
 
         print(f"Detected: {name}, Confidence: {confidence}")
 
-        # 🔐 Adjust threshold if needed
-        if confidence < 80:
+        # ✅ Strong match → ACCEPT
+        if confidence < ACCEPT_THRESHOLD:
             return jsonify({
                 "status": "granted",
                 "user": name,
                 "confidence": float(confidence)
-            })
+            }), 200
 
-    return jsonify({"status": "denied", "message": "Face not recognized"})
+        # ❌ Weak match → UNKNOWN
+        elif confidence >= REJECT_THRESHOLD:
+            return jsonify({
+                "status": "denied",
+                "user": "Unknown",
+                "confidence": float(confidence),
+                "message": "Unknown user"
+            }), 200
+
+    # fallback
+    return jsonify({
+        "status": "denied",
+        "user": "Unknown",
+        "message": "Face not recognized"
+    }), 200
 
 
-# ===== RUN SERVER =====
+# ===== RETRAIN API =====
+@app.route('/retrain', methods=['POST'])
+def retrain():
+    os.system("python manage_model.py")
+    load_model()
+    return jsonify({
+        "status": "success",
+        "message": "Model retrained"
+    })
+
+
+# ===== RUN =====
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
