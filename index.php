@@ -1,8 +1,14 @@
 <?php
+
 session_start();
 
-if (!isset($_SESSION['user_id'])) {
-    header('Location: login.php');
+if (
+    !isset($_SESSION['user_id']) ||
+    !isset($_SESSION['face_verified']) ||
+    !isset($_SESSION['otp_verified'])
+) {
+
+    header("Location: /esd/login.php");
     exit();
 }
 ?>

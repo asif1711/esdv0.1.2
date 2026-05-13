@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_email'] = $user['email'];
 
-            header('Location: /esd/face_verify.html');
+            header('Location: /esd/auth/auth_router.php');
             exit();
         } else {
             $error_message = "Incorrect password.";

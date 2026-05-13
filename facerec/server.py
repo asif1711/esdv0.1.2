@@ -116,6 +116,70 @@ def verify():
         "message": "Face not recognized"
     }), 200
 
+@app.route('/capture', methods=['POST'])
+def capture():
+
+    if 'image' not in request.files:
+        return jsonify({
+            "status": "error",
+            "message": "No image uploaded"
+        }), 400
+
+    email = request.form.get("email")
+
+    if not email:
+        return jsonify({
+            "status": "error",
+            "message": "Email missing"
+        }), 400
+
+    file = request.files['image']
+
+    npimg = np.frombuffer(file.read(), np.uint8)
+    img = cv2.imdecode(npimg, cv2.IMREAD_COLOR)
+
+    if img is None:
+        return jsonify({
+            "status": "error",
+            "message": "Invalid image"
+        }), 400
+
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    faces = faceCascade.detectMultiScale(gray, 1.3, 5)
+
+    if len(faces) == 0:
+        return jsonify({
+            "status": "error",
+            "message": "No face detected"
+        }), 200
+
+    dataset_dir = os.path.join("dataset", email)
+
+    os.makedirs(dataset_dir, exist_ok=True)
+
+    count = len(os.listdir(dataset_dir))
+
+    for (x, y, w, h) in faces:
+
+        face = gray[y:y+h, x:x+w]
+
+        img_path = os.path.join(
+            dataset_dir,
+            f"{count + 1}.jpg"
+        )
+
+        cv2.imwrite(img_path, face)
+
+        return jsonify({
+            "status": "success",
+            "count": count + 1
+        }), 200
+
+    return jsonify({
+        "status": "error",
+        "message": "Capture failed"
+    }), 200
 
 # ===== RETRAIN API =====
 @app.route('/retrain', methods=['POST'])
