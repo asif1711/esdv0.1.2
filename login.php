@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_email'] = $user['email'];
 
-            header('Location: /esd/face_verify.html');
+            header('Location: face_verify.html');
             exit();
         } else {
             $error_message = "Incorrect password.";
@@ -107,6 +107,10 @@ $conn->close();
           </button>
 
         </form>
+
+        <p style="margin-top:20px; text-align:center; font-size:14px; color:rgba(255,255,255,0.6);">
+          Don't have an account? <a href="signup.php" style="color:#ff3b5c; text-decoration:none; font-weight:600;">Sign Up</a>
+        </p>
 
       </div>
     </div>
