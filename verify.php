@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit();
@@ -12,6 +11,7 @@ require 'db.php';
 $user_id = $_SESSION['user_id'];
 $user_name = "Attendee";
 $user_email = "";
+$user_phone = $_GET['phone'] ?? '';
 
 // Fetch the user's name from database dynamically
 $stmt = $conn->prepare("SELECT name, email FROM users WHERE id = ?");
@@ -29,42 +29,121 @@ $conn->close();
 ?>
 
 <!DOCTYPE html>
-<html lang="zxx">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>OnlyYou | Ticket Access & Verification</title>
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>OnlyYou | Identity & Ticket Access</title>
 
-    <!-- Css Styles -->
-    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
-    <link rel="stylesheet" href="css/font-awesome.min.css" type="text/css">
-    <link rel="stylesheet" href="css/elegant-icons.css" type="text/css">
-    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
 
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
+            min-height: 100vh;
             background:
                 radial-gradient(circle at top left, rgba(255, 59, 92, 0.08), transparent 30%),
                 radial-gradient(circle at bottom right, rgba(255, 59, 92, 0.06), transparent 25%),
                 #040b1d;
             overflow-x: hidden;
             color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wrapper {
             min-height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
         }
 
-        .header {
-            background: rgba(4, 11, 29, 0.8) !important;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        .auth-layout {
+            width: 100%;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1fr 480px;
+            align-items: center;
+            gap: 80px;
+            transition: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        .login__form {
+        /* LEFT SIDE */
+        .brand-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .brand-logo {
+            width: 160px;
+            margin-bottom: 30px;
+            filter: drop-shadow(0 10px 30px rgba(255, 59, 92, 0.25));
+        }
+
+        .brand-title {
+            font-size: 58px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 18px;
+        }
+
+        .brand-title span {
+            color: #ff3b5c;
+        }
+
+        .brand-subtitle {
+            max-width: 500px;
+            color: rgba(255, 255, 255, 0.68);
+            font-size: 17px;
+            line-height: 1.7;
+        }
+
+        .security-badges {
+            margin-top: 40px;
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .badge-card {
+            padding: 14px 18px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(12px);
+            min-width: 170px;
+        }
+
+        .badge-title {
+            font-size: 13px;
+            color: #ff5a76;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .badge-text {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.72);
+            line-height: 1.5;
+        }
+
+        /* RIGHT CARD (OTP Form) */
+        .verify-card {
             position: relative;
             padding: 42px;
             border-radius: 28px;
@@ -75,49 +154,77 @@ $conn->close();
             border: 1px solid rgba(255, 255, 255, 0.05);
             box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45);
             overflow: hidden;
-            transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: all 0.5s ease;
         }
 
-        .login__form::before {
+        .verify-card::before {
             content: "";
             position: absolute;
             top: -120px;
             right: -120px;
             width: 260px;
             height: 260px;
-            background: rgba(255, 59, 92, 0.1);
+            background: rgba(255, 59, 92, 0.12);
             border-radius: 50%;
             filter: blur(40px);
-            pointer-events: none;
         }
 
-        .login__form h3 {
-            color: #ffffff;
-            font-size: 26px;
-            font-weight: 700;
-            margin-bottom: 12px;
-            text-align: center;
-        }
-
-        .login__form p.form-subtitle {
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 14px;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .input__item {
+        .verify-header {
             position: relative;
+            z-index: 2;
+            margin-bottom: 35px;
+        }
+
+        .verify-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 50px;
+            background: rgba(255, 59, 92, 0.12);
+            border: 1px solid rgba(255, 59, 92, 0.2);
+            color: #ff6b84;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 18px;
+        }
+
+        .verify-title {
+            font-size: 38px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .verify-subtitle {
+            color: rgba(255, 255, 255, 0.65);
+            line-height: 1.7;
+            font-size: 15px;
+        }
+
+        /* INPUTS */
+        .input-group-custom {
             margin-bottom: 22px;
         }
 
-        .input__item input {
+        .input-label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper input {
             width: 100%;
             height: 64px;
             border: none;
             outline: none;
             border-radius: 18px;
-            padding: 0 60px 0 24px;
+            padding: 0 60px 0 20px;
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.06);
             color: white;
@@ -125,21 +232,26 @@ $conn->close();
             transition: 0.3s ease;
         }
 
-        .input__item input:focus {
+        .input-wrapper input:focus {
             border-color: rgba(255, 59, 92, 0.45);
             box-shadow: 0 0 0 4px rgba(255, 59, 92, 0.08);
         }
 
-        .input__item span {
-            position: absolute;
-            right: 22px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #ff3b5c;
-            font-size: 20px;
+        .input-wrapper input::placeholder {
+            color: rgba(255, 255, 255, 0.35);
         }
 
-        .site-btn {
+        .input-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ff4d6d;
+            font-size: 18px;
+        }
+
+        /* BUTTON */
+        .verify-btn {
             width: 100%;
             height: 64px;
             border: none;
@@ -148,73 +260,59 @@ $conn->close();
             color: white;
             font-size: 16px;
             font-weight: 700;
-            cursor: pointer;
+            margin-top: 8px;
             transition: 0.3s ease;
-            box-shadow: 0 18px 40px rgba(255, 59, 92, 0.25);
+            box-shadow: 0 18px 40px rgba(255, 59, 92, 0.28);
         }
 
-        .site-btn:hover {
+        .verify-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 24px 45px rgba(255, 59, 92, 0.35);
         }
 
-        #responseMessage {
-            padding: 14px;
-            border-radius: 14px;
+        #verifyMessage {
+            margin-top: 24px;
+            padding: 16px;
+            border-radius: 16px;
+            text-align: center;
             font-size: 14px;
             font-weight: 600;
-            line-height: 1.5;
             display: none;
         }
 
-        .success-msg {
+        .success {
             display: block !important;
-            background: rgba(34, 197, 94, 0.08);
+            background: rgba(34, 197, 94, 0.1);
             border: 1px solid rgba(34, 197, 94, 0.2);
             color: #4ade80;
         }
 
-        .error-msg {
+        .error {
             display: block !important;
-            background: rgba(255, 59, 92, 0.08);
+            background: rgba(255, 59, 92, 0.1);
             border: 1px solid rgba(255, 59, 92, 0.2);
             color: #ff6b84;
         }
 
-        /* Verification Form Inline slide-down style */
-        .verify-section {
-            border-top: 1px solid rgba(255, 255, 255, 0.06);
-            margin-top: 28px;
-            padding-top: 28px;
-        }
-
-        .verify-section h4 {
-            color: white;
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-
-        /* Checkmark animations */
+        /* --- MICROS-ANIMATED CHECKMARK TRANSITION --- */
         .success-transition-container {
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 220px;
+            min-height: 250px;
             text-align: center;
         }
 
         .success-checkmark {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
+            width: 88px;
+            height: 88px;
+            margin-bottom: 24px;
         }
 
         .checkmark {
-            width: 80px;
-            height: 80px;
+            width: 88px;
+            height: 88px;
             border-radius: 50%;
             display: block;
             stroke-width: 4;
@@ -242,30 +340,51 @@ $conn->close();
         }
 
         @keyframes stroke {
-            100% { stroke-dashoffset: 0; }
+            100% {
+                stroke-dashoffset: 0;
+            }
         }
 
         @keyframes scale {
-            0%, 100% { transform: none; }
-            50% { transform: scale3d(1.1, 1.1, 1); }
+            0%, 100% {
+                transform: none;
+            }
+            50% {
+                transform: scale3d(1.1, 1.1, 1);
+            }
         }
 
         @keyframes fill {
-            100% { box-shadow: inset 0px 0px 0px 40px rgba(34, 197, 94, 0.1); }
+            100% {
+                box-shadow: inset 0px 0px 0px 44px rgba(34, 197, 94, 0.1);
+            }
         }
 
         .transition-title {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 700;
             color: #4ade80;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             text-transform: uppercase;
             letter-spacing: 1px;
+            animation: fadeInUp 0.5s ease-out 0.3s both;
         }
 
         .transition-subtitle {
             font-size: 14px;
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.65);
+            animation: fadeInUp 0.5s ease-out 0.5s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         /* --- PREMIUM TICKET SUCCESS SCREEN --- */
@@ -273,7 +392,7 @@ $conn->close();
             display: none;
             width: 100%;
             max-width: 820px;
-            margin: 40px auto;
+            margin: 0 auto;
             opacity: 0;
             transform: scale(0.9);
             transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -301,6 +420,7 @@ $conn->close();
             will-change: transform;
         }
 
+        /* Glowing aura effect behind the ticket card */
         .ticket::after {
             content: "";
             position: absolute;
@@ -316,6 +436,7 @@ $conn->close();
             opacity: 1;
         }
 
+        /* Ticket Left Side (Content) */
         .ticket-left {
             flex: 1.6;
             padding: 42px 48px;
@@ -399,6 +520,7 @@ $conn->close();
             font-weight: 600;
         }
 
+        /* Vertical Tear Divider */
         .ticket-divider {
             position: relative;
             width: 1px;
@@ -421,9 +543,15 @@ $conn->close();
             box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
         }
 
-        .notch-top { top: -34px; }
-        .notch-bottom { bottom: -34px; }
+        .notch-top {
+            top: -34px;
+        }
 
+        .notch-bottom {
+            bottom: -34px;
+        }
+
+        /* Ticket Right Side (QR) */
         .ticket-right {
             flex: 1;
             padding: 42px;
@@ -454,6 +582,8 @@ $conn->close();
                 0 15px 35px rgba(0, 0, 0, 0.4), 
                 0 0 25px rgba(255, 59, 92, 0.1);
             transition: transform 0.4s ease;
+            position: relative;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -477,6 +607,7 @@ $conn->close();
             letter-spacing: 0.5px;
         }
 
+        /* Ticket Action Buttons */
         .ticket-actions {
             margin-top: 30px;
             display: flex;
@@ -521,7 +652,26 @@ $conn->close();
             color: white;
         }
 
+        /* RESPONSIVE DESIGN */
         @media(max-width: 992px) {
+            body {
+                overflow: auto;
+            }
+
+            .auth-layout {
+                grid-template-columns: 1fr;
+                gap: 50px;
+            }
+
+            .brand-section {
+                text-align: center;
+                align-items: center;
+            }
+
+            .brand-title {
+                font-size: 42px;
+            }
+
             .ticket {
                 flex-direction: column;
             }
@@ -544,9 +694,19 @@ $conn->close();
                 margin: 0 auto;
             }
 
-            .notch { top: -14px; }
-            .notch-top { left: -34px; right: auto; }
-            .notch-bottom { right: -34px; left: auto; }
+            .notch {
+                top: -14px;
+            }
+
+            .notch-top {
+                left: -34px;
+                right: auto;
+            }
+
+            .notch-bottom {
+                right: -34px;
+                left: auto;
+            }
         }
 
         /* --- PREMIUM TICKET PRINT STYLING --- */
@@ -712,215 +872,205 @@ $conn->close();
 </head>
 
 <body>
-    <!-- Header Section Begin -->
-    <header class="header">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-2">
-                    <div class="header__logo">
-                        <a href="./login.php"><img src="img/logo.png" alt="OnlyYou Logo"></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-    <!-- Header End -->
 
-    <!-- Breadcrumb Section Begin -->
-    <section class="normal-breadcrumb set-bg" style="margin-bottom: 10px;" data-setbg="img/normal-breadcrumb.jpg">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 text-center">
-                    <div class="normal__breadcrumb__text">
-                        <h2>Access Code Verification</h2>
-                        <p>Verify your phone number to reveal your entry pass</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Breadcrumb Section End -->
+    <div class="wrapper">
 
-    <!-- Form Section Begin -->
-    <section class="login spad" style="padding-top: 30px; padding-bottom: 30px;">
-        <div class="container" id="mainContainer">
-            <div class="row d-flex justify-content-center" id="formRow">
-                <div class="col-lg-6">
-                    <div class="login__form" id="formCard">
-                        
-                        <!-- GENERATE FLOW -->
-                        <div id="generateFlow">
-                            <h3>Enter Your Mobile Number</h3>
-                            <p class="form-subtitle">We will send a secure verification code to your registered mobile device.</p>
-                            <form id="accessCodeForm" method="POST">
-                                <div class="input__item">
-                                    <input type="text" id="phone" name="phone" placeholder="+91 XXXXX XXXXX" required>
-                                    <span class="icon_phone"></span>
-                                </div>
-                                <button type="submit" class="site-btn">Generate and Send Code</button>
-                            </form>
-                            <p id="responseMessage" class="mt-3 text-center"></p>
+        <div class="auth-layout" id="mainLayout">
+
+            <!-- LEFT BRAND SECTION -->
+            <div class="brand-section" id="brandSection">
+
+                <img src="img/logo.png" class="brand-logo">
+
+                <h1 class="brand-title">
+                    Secure Identity <br>
+                    <span>Verification</span>
+                </h1>
+
+                <p class="brand-subtitle">
+                    Multi-layer authentication system powered by secure OTP validation.
+                    Access is granted only after successful identity confirmation.
+                </p>
+
+                <div class="security-badges">
+
+                    <div class="badge-card">
+                        <div class="badge-title">Biometric Security</div>
+                        <div class="badge-text">
+                            AI-assisted layered identity validation system.
                         </div>
-
-                        <!-- VERIFY FLOW (INLINE SLIDE DOWN) -->
-                        <div id="verifyFlow" class="verify-section" style="display: none;">
-                            <h4>Enter Verification Code</h4>
-                            <p class="form-subtitle" style="margin-bottom: 20px;">Type the 6-digit access code sent to your device.</p>
-                            <form id="verifyForm">
-                                <div class="input__item">
-                                    <input type="text" id="verify_code" name="code" placeholder="Enter secure OTP" required>
-                                    <span class="icon_lock"></span>
-                                </div>
-                                <button type="submit" class="site-btn">Verify Identity</button>
-                            </form>
-                            <div id="verifyMessage" class="mt-3 text-center" style="padding: 14px; border-radius: 14px; display: none;"></div>
-                        </div>
-
-                        <!-- SUCCESS TRANSITION DRAWING CHECKMARK -->
-                        <div class="success-transition-container" id="successTransition">
-                            <div class="success-checkmark">
-                                <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                                    <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
-                                    <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
-                                </svg>
-                            </div>
-                            <div class="transition-title">Access Granted</div>
-                            <div class="transition-subtitle">Generating secure event ticket...</div>
-                        </div>
-
                     </div>
+
+                    <div class="badge-card">
+                        <div class="badge-title">OTP Protection</div>
+                        <div class="badge-text">
+                            Secure one-time passcode verification layer enabled.
+                        </div>
+                    </div>
+
                 </div>
+
             </div>
 
-            <!-- PREMIUM HOVER-INTERACTIVE EVENT TICKET (REVEALS HERE) -->
-            <div class="ticket-wrapper" id="ticketWrapper">
-                <div class="ticket">
-                    <!-- Left Details -->
-                    <div class="ticket-left">
-                        <div class="ticket-brand">
-                            <img src="img/logo.png" alt="OnlyYou Logo">
-                            <span class="badge-verified">✓ Verified Access</span>
-                        </div>
+            <!-- RIGHT SECURE CARD (OTP FORM) -->
+            <div class="verify-card" id="formCard">
 
-                        <div>
-                            <h2 class="ticket-event">Design Systems for Scale</h2>
-                            <p class="ticket-desc">With Adam Cooper, Lead Product Designer</p>
-                        </div>
+                <div class="verify-header">
 
-                        <div class="ticket-info-grid">
-                            <div class="info-item">
-                                <span class="info-label">Attendee Name</span>
-                                <span class="info-value"><?= htmlspecialchars($user_name) ?></span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Date & Time</span>
-                                <span class="info-value">AUG 20 • 6:00 PM</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Venue</span>
-                                <span class="info-value">Silicon Valley Cyber-Hub</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Ticket ID</span>
-                                <span class="info-value">ONLYYOU-<?= str_pad($user_id, 5, '0', STR_PAD_LEFT) ?></span>
-                            </div>
-                        </div>
+                    <div class="verify-label">
+                        ● Secure Access Layer
                     </div>
 
-                    <!-- Tear tear -->
-                    <div class="ticket-divider">
-                        <div class="notch notch-top"></div>
-                        <div class="notch notch-bottom"></div>
-                    </div>
+                    <h2 class="verify-title">
+                        Verify Access Code
+                    </h2>
 
-                    <!-- Right QR Code -->
-                    <div class="ticket-right">
-                        <div class="qr-label">Scan for Entry</div>
-                        <div class="qr-frame">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ONLYYOU-TICKET-<?= urlencode($user_id . '-' . $user_name) ?>&color=ff3b5c&bgcolor=ffffff" alt="Entry QR Code">
-                        </div>
-                        <div class="qr-status">Access Level: VIP Attendee</div>
-                    </div>
+                    <p class="verify-subtitle">
+                        Enter the verification code sent to your registered phone number
+                        to continue secure authentication.
+                    </p>
+
                 </div>
 
-                <!-- Ticket Action Buttons -->
-                <div class="ticket-actions">
-                    <button onclick="window.print()" class="btn-action btn-print">
-                        <span>🖨️ Print Ticket</span>
+                <form id="verifyForm">
+
+                    <div class="input-group-custom">
+
+                        <label class="input-label">
+                            Phone Number
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <input type="text" id="verify_phone" name="phone" placeholder="+91 XXXXX XXXXX" value="<?= htmlspecialchars($user_phone) ?>" required>
+
+                            <span class="input-icon">
+                                ☎
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="input-group-custom">
+
+                        <label class="input-label">
+                            Access Code
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <input type="text" id="verify_code" name="code" placeholder="Enter secure OTP" required>
+
+                            <span class="input-icon">
+                                ✦
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                    <button type="submit" class="verify-btn">
+                        Verify Identity
                     </button>
-                    <a href="index.php" class="btn-action btn-home">
-                        <span>🏠 Return to Dashboard</span>
-                    </a>
+
+                </form>
+
+                <div id="verifyMessage"></div>
+
+                <!-- Circular drawing checkmark inside form card to play during success transition -->
+                <div class="success-transition-container" id="successTransition">
+                    <div class="success-checkmark">
+                        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
+                            <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
+                        </svg>
+                    </div>
+                    <div class="transition-title">Access Granted</div>
+                    <div class="transition-subtitle">Generating secure event ticket...</div>
                 </div>
+
             </div>
 
         </div>
-    </section>
-    <!-- Form Section End -->
 
-    <!-- Footer Section Begin -->
-    <footer class="footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3">
-                    <div class="footer__logo">
-                        <a href="./login.php"><img src="img/logo.png" alt="OnlyYou Logo"></a>
+        <!-- STUNNING HOVER-INTERACTIVE GLASSMORPHIC EVENT TICKET SUCCESS SCREEN -->
+        <div class="ticket-wrapper" id="ticketWrapper">
+            <div class="ticket">
+                <!-- Left Details -->
+                <div class="ticket-left">
+                    <div class="ticket-brand">
+                        <img src="img/logo.png" alt="OnlyYou Logo">
+                        <span class="badge-verified">✓ Verified Access</span>
+                    </div>
+
+                    <div>
+                        <h2 class="ticket-event">Design Systems for Scale</h2>
+                        <p class="ticket-desc">With Adam Cooper, Lead Product Designer</p>
+                    </div>
+
+                    <div class="ticket-info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Attendee Name</span>
+                            <span class="info-value"><?= htmlspecialchars($user_name) ?></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Date & Time</span>
+                            <span class="info-value">AUG 20 • 6:00 PM</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Venue</span>
+                            <span class="info-value">Silicon Valley Cyber-Hub</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Ticket ID</span>
+                            <span class="info-value">ONLYYOU-<?= str_pad($user_id, 5, '0', STR_PAD_LEFT) ?></span>
+                        </div>
                     </div>
                 </div>
+
+                <!-- Tear Tear Tear -->
+                <div class="ticket-divider">
+                    <div class="notch notch-top"></div>
+                    <div class="notch notch-bottom"></div>
+                </div>
+
+                <!-- Right QR Code -->
+                <div class="ticket-right">
+                    <div class="qr-label">Scan for Entry</div>
+                    <div class="qr-frame">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ONLYYOU-TICKET-<?= urlencode($user_id . '-' . $user_name) ?>&color=ff3b5c&bgcolor=ffffff" alt="Entry QR Code">
+                    </div>
+                    <div class="qr-status">Access Level: VIP Attendee</div>
+                </div>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="ticket-actions">
+                <button onclick="window.print()" class="btn-action btn-print">
+                    <span>🖨️ Print Ticket</span>
+                </button>
+                <a href="index.php" class="btn-action btn-home">
+                    <span>🏠 Return to Dashboard</span>
+                </a>
             </div>
         </div>
-    </footer>
-    <!-- Footer Section End -->
 
-    <!-- Js Plugins -->
+    </div>
+
+    <!-- JS Plugins -->
     <script src="js/jquery-3.3.1.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
-    
+
     <script>
-        let globalPhone = ""; // store phone globally for verification
-
-        // GENERATE FLOW SUBMISSION
-        document.getElementById("accessCodeForm").addEventListener("submit", function(e) {
-            e.preventDefault();
-            const phone = document.getElementById("phone").value;
-            globalPhone = phone;
-
-            const formData = new FormData();
-            formData.append('phone', phone);
-
-            fetch("generate-access-code.php", {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                const responseMessage = document.getElementById("responseMessage");
-                responseMessage.textContent = data.message;
-                
-                if (data.message.includes("successfully")) {
-                    responseMessage.className = "mt-3 text-center success-msg";
-                    
-                    // Slide down and reveal the verification code input field inline!
-                    setTimeout(() => {
-                        $("#verifyFlow").slideDown(500);
-                    }, 400);
-                } else {
-                    responseMessage.className = "mt-3 text-center error-msg";
-                }
-            })
-            .catch(err => {
-                console.error("Error:", err);
-            });
-        });
-
-        // VERIFY FLOW SUBMISSION
         document.getElementById("verifyForm").addEventListener("submit", function (e) {
             e.preventDefault();
 
+            const phone = document.getElementById("verify_phone").value;
             const code = document.getElementById("verify_code").value;
 
             const formData = new FormData();
-            formData.append("phone", globalPhone);
+            formData.append("phone", phone);
             formData.append("code", code);
 
             fetch("verify-code.php", {
@@ -933,15 +1083,15 @@ $conn->close();
                 msg.innerText = data.message;
 
                 if (data.message.toLowerCase().includes("success")) {
-                    msg.className = "mt-3 text-center success-msg";
+                    msg.className = "success";
                     msg.style.display = "block";
 
-                    // Trigger the success micro-animations inline
+                    // Trigger the success micro-animations
                     setTimeout(() => {
                         triggerSuccessTransition();
                     }, 800);
                 } else {
-                    msg.className = "mt-3 text-center error-msg";
+                    msg.className = "error";
                     msg.style.display = "block";
                 }
             })
@@ -949,35 +1099,38 @@ $conn->close();
                 console.error(err);
                 const msg = document.getElementById("verifyMessage");
                 msg.innerText = "Verification service unavailable";
-                msg.className = "mt-3 text-center error-msg";
+                msg.className = "error";
                 msg.style.display = "block";
             });
         });
 
         function triggerSuccessTransition() {
-            const generateFlow = document.getElementById("generateFlow");
-            const verifyFlow = document.getElementById("verifyFlow");
+            const form = document.getElementById("verifyForm");
+            const verifyHeader = document.querySelector(".verify-header");
+            const verifyMsg = document.getElementById("verifyMessage");
             const successTransition = document.getElementById("successTransition");
             const formCard = document.getElementById("formCard");
 
-            // Fade out the forms
-            generateFlow.style.opacity = "0";
-            generateFlow.style.transform = "translateY(-10px)";
-            generateFlow.style.transition = "all 0.5s ease";
-            
-            verifyFlow.style.opacity = "0";
-            verifyFlow.style.transform = "translateY(-10px)";
-            verifyFlow.style.transition = "all 0.5s ease";
+            // Fade out the Form details
+            form.style.opacity = "0";
+            form.style.transform = "translateY(-15px)";
+            form.style.transition = "all 0.5s ease";
+            verifyHeader.style.opacity = "0";
+            verifyHeader.style.transform = "translateY(-15px)";
+            verifyHeader.style.transition = "all 0.5s ease";
+            verifyMsg.style.display = "none";
 
             setTimeout(() => {
-                generateFlow.style.display = "none";
-                verifyFlow.style.display = "none";
+                form.style.display = "none";
+                verifyHeader.style.display = "none";
 
                 // Show drawing checkmark container
                 successTransition.style.display = "flex";
+
+                // Expand form card dimensions into a neat container for the checkmark
                 formCard.style.padding = "60px";
 
-                // After visual celebration, transition to Ticket layout
+                // After 1.8 seconds of visual celebration, transition to full Ticket view
                 setTimeout(() => {
                     revealPremiumTicket();
                 }, 2200);
@@ -986,21 +1139,21 @@ $conn->close();
         }
 
         function revealPremiumTicket() {
-            const formRow = document.getElementById("formRow");
+            const mainLayout = document.getElementById("mainLayout");
             const ticketWrapper = document.getElementById("ticketWrapper");
 
-            // Shrink and fade out the form card row
-            formRow.style.opacity = "0";
-            formRow.style.transform = "scale(0.92)";
-            formRow.style.transition = "all 0.8s cubic-bezier(0.25, 1, 0.5, 1)";
+            // Shrink and fade out the whole original brand/form dual column layout
+            mainLayout.style.opacity = "0";
+            mainLayout.style.transform = "scale(0.92)";
+            mainLayout.style.transition = "all 0.8s cubic-bezier(0.25, 1, 0.5, 1)";
 
             setTimeout(() => {
-                formRow.style.display = "none";
+                mainLayout.style.display = "none";
 
-                // Fade in and scale up the event ticket
+                // Fade in and scale up the glassmorphic ticket success screen
                 ticketWrapper.classList.add("active");
 
-                // Initialize 3D Holographic Parallax Effect on the ticket card
+                // Initialize 3D Holographic Parallax Effect on the ticket
                 init3DTilt();
 
             }, 750);
@@ -1012,8 +1165,8 @@ $conn->close();
 
             ticket.addEventListener('mousemove', (e) => {
                 const rect = ticket.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
+                const x = e.clientX - rect.left; // x coordinate inside element
+                const y = e.clientY - rect.top;  // y coordinate inside element
                 
                 const xc = rect.width / 2;
                 const yc = rect.height / 2;
@@ -1021,9 +1174,11 @@ $conn->close();
                 const dx = x - xc;
                 const dy = y - yc;
                 
-                const tiltX = -(dy / yc) * 6; // Max 6 deg
-                const tiltY = (dx / xc) * 6;
+                // Tilt calculation
+                const tiltX = -(dy / yc) * 6; // Max tilt 6 degrees
+                const tiltY = (dx / xc) * 6;  // Max tilt 6 degrees
                 
+                // Apply dynamic variables for radial gradient light source tracking
                 ticket.style.setProperty('--mx', `${(x / rect.width) * 100}%`);
                 ticket.style.setProperty('--my', `${(y / rect.height) * 100}%`);
                 
@@ -1043,6 +1198,7 @@ $conn->close();
             });
         }
     </script>
+
 </body>
 
 </html>
