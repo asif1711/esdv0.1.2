@@ -31,7 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $sql = "INSERT INTO users (email, name, password) VALUES ('$email', '$name', '$hashed_password')";
 
     if ($conn->query($sql) === TRUE) {
-        echo "<script>alert('Registration successful. Please log in.'); window.location.href = 'login.php';</script>";
+        header('Location: login.php?registered=1');
+        exit();
     } else {
         echo "<script>alert('Error: ' . $conn->error); window.location.href = 'signup.php';</script>";
     }

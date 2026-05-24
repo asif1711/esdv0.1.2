@@ -76,6 +76,12 @@ $conn->close();
 
         <div class="divider"></div>
 
+        <?php if (isset($_GET['registered']) && $_GET['registered'] == '1'): ?>
+          <div class="success-box" style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2); color: #4ade80; padding: 14px; border-radius: 14px; margin-bottom: 20px; font-size: 14px; font-weight: 600; text-align: center;">
+            Registration successful! Please log in below.
+          </div>
+        <?php endif; ?>
+
         <?php if ($error_message): ?>
           <div class="error-box">
             <?= htmlspecialchars($error_message) ?>

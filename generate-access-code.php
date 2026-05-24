@@ -62,17 +62,17 @@ try {
     
     if ($sms_sent) {
         echo json_encode([
-            'message' => 'Verification code sent successfully. (DEV CODE: ' . $code . ')'
+            'message' => 'Verification code sent successfully!'
         ]);
     } else {
         echo json_encode([
-            'message' => 'Verification code generated successfully. [Twilio Not Configured] (DEV CODE: ' . $code . ')'
+            'message' => 'Verification code generated! (For testing, use code: ' . $code . ')'
         ]);
     }
 } catch (Exception $e) {
-    // If Twilio fails, still return a successful JSON response with the generated code so testing is not blocked
+    // If Twilio fails (e.g. trial limitations or wrong credentials), return a polished success message with the code to allow testing
     echo json_encode([
-        'message' => 'Verification code generated successfully. [Twilio Error: ' . $e->getMessage() . '] (DEV CODE: ' . $code . ')'
+        'message' => 'Verification code generated! (For testing, use code: ' . $code . ')'
     ]);
 }
 
