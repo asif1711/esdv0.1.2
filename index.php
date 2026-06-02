@@ -87,7 +87,7 @@ if (
 
     <img src="img/events/1.jpg" alt="">
 
-    <div class="hero-featured__overlay">
+    <div class="hero-featured__overlay" style="min-width: 800px;">
       <span class="event-time">AUG 20 • 6:00 PM</span>
 
       <h1>Design Systems for Scale</h1>
@@ -112,12 +112,12 @@ if (
     </div>
 
     <div class="thumb">
-      <img src="img/events/2.jpg">
+      <img src="img/events/2.webp">
       <span>Startup Meetup</span>
     </div>
 
     <div class="thumb">
-      <img src="img/events/3.jpg">
+      <img src="img/events/3.webp">
       <span>Security Summit</span>
     </div>
 

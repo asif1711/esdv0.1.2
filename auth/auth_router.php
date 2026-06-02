@@ -4,17 +4,19 @@ session_start();
 
 require '../db.php';
 
-if (!isset($_SESSION['user_id'])) {
+if (
+    !isset($_SESSION['user_id']) ||
+    !isset($_SESSION['user_email'])
+) {
 
     header('Location: /esd/login.php');
     exit();
-
 }
 
 $email = $_SESSION['user_email'];
 
 $stmt = $conn->prepare("
-    SELECT role, trained
+    SELECT role, trained, dataset_generated
     FROM users
     WHERE email = ?
 ");
@@ -41,25 +43,33 @@ $role = $user['role'];
 // ===== STANDARD USER =====
 if ($role === 'user') {
 
-    // User already has dataset
-    if ((int)$user['face_dataset_exists'] === 1) {
-
+    // Model trained
+    if (
+        (int)$user['dataset_generated'] === 1 &&
+        (int)$user['trained'] === 1
+    ) {
         header('Location: /esd/face_verify.php');
         exit();
-
     }
 
-    // First-time face registration
+    // Dataset captured, waiting for training
+    if (
+        (int)$user['dataset_generated'] === 1 &&
+        (int)$user['trained'] === 0
+    ) {
+        header('Location: /esd/face/face_training_pending.php');
+        exit();
+    }
+
+    // No dataset yet
     header('Location: /esd/face/capture_face.php');
     exit();
-
 }
-
 
 // ===== EVENT MANAGER =====
 if ($role === 'event_manager') {
 
-    header('Location: /esd/events/event_request.php');
+    header('Location: /esd/events/eventM_Dashboard.php');
     exit();
 
 }
@@ -68,7 +78,7 @@ if ($role === 'event_manager') {
 // ===== ADMIN =====
 if ($role === 'admin') {
 
-    header('Location: /esd/admin/admin_sms_verify.php');
+    header('Location: /esd/admin/adminDashboard.php');
     exit();
 
 }

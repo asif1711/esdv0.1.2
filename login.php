@@ -54,9 +54,9 @@ $conn->close();
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/auth.css">
 </head>
-
+<script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
 <body>
-
+<div id="tsparticles"></div>
 <!-- LOGIN SECTION -->
 <section class="auth">
   <div class="auth__container">
@@ -122,6 +122,109 @@ document.getElementById("loginForm").addEventListener("submit", function () {
   btn.disabled = true;
 });
 </script>
+<script>
 
+window.addEventListener("load", () => {
+
+    tsParticles.load("tsparticles", {
+
+    background: {
+        color: {
+            value: "#050505"
+        }
+    },
+
+    fpsLimit: 60,
+
+    particles: {
+
+        number: {
+            value: 80,
+            density: {
+                enable: true,
+                area: 1000
+            }
+        },
+
+        color: {
+            value: "#FF4569"
+        },
+
+        links: {
+
+            enable: true,
+
+            color: "#FF4569",
+
+            distance: 150,
+
+            opacity: 0.15,
+
+            width: 1
+        },
+
+        move: {
+
+            enable: true,
+
+            speed: 1,
+
+            direction: "none",
+
+            random: false,
+
+            straight: false,
+
+            outModes: {
+                default: "out"
+            }
+        },
+
+        opacity: {
+
+            value: 0.3
+        },
+
+        size: {
+
+            value: {
+                min: 1,
+                max: 3
+            }
+        }
+    },
+
+    interactivity: {
+
+        events: {
+
+            onHover: {
+                enable: true,
+                mode: "grab"
+            },
+
+            resize: true
+        },
+
+        modes: {
+
+            grab: {
+
+                distance: 200,
+
+                links: {
+                    opacity: 0.4
+                }
+            }
+        }
+    },
+
+    detectRetina: true
+});
+
+});
+
+</script>
+        
 </body>
 </html>
