@@ -1,47 +1,48 @@
-# ESD System Documentation
+# Secure VIP Event Management & Access Control Platform
 
-# 1. Introduction
-
-Employee Smart Detection (ESD) is a secure attendance and identity verification platform designed to ensure authentic employee attendance through a combination of OTP verification and facial recognition technology.
+# Technical Documentation
 
 ---
 
-# 2. System Objectives
+# 1. Introduction
 
-* Eliminate proxy attendance.
-* Improve attendance accuracy.
-* Provide secure authentication.
-* Centralize employee management.
-* Generate attendance analytics.
+The Secure VIP Event Management & Access Control Platform is a secure event administration system designed to manage privileged access to events, resources, and participant information.
+
+The system incorporates multiple authentication and authorization layers to ensure only verified users gain access to protected content.
+
+---
+
+# 2. Objectives
+
+The platform aims to:
+
+* Protect sensitive event information.
+* Prevent unauthorized access.
+* Streamline participant verification.
+* Improve event administration.
+* Maintain auditability and accountability.
 
 ---
 
 # 3. System Architecture
 
 ```text
-User
- │
- ▼
-Login Page
- │
- ▼
-OTP Verification
- │
- ▼
-Role Identification
- │
- ▼
-Dataset Check
- ├──────────────┐
- │              │
- ▼              ▼
-Face Register   Face Verify
- │              │
- └──────┬───────┘
+Client Browser
+        │
         ▼
-Attendance Marking
+Authentication Layer
+        │
         ▼
-Dashboard
+Verification Layer
+        │
+        ▼
+Authorization Layer
+        │
+        ▼
+Application Layer
+        │
+        ▼
+MySQL Database
 ```
 
 ---
@@ -50,110 +51,167 @@ Dashboard
 
 ## Step 1
 
-User submits mobile number.
+User submits credentials.
 
 ## Step 2
 
-System generates OTP.
+System validates account.
 
 ## Step 3
 
-Twilio sends OTP.
+OTP is generated.
 
 ## Step 4
 
-User verifies OTP.
+OTP verification is completed.
 
 ## Step 5
 
-System validates OTP.
+Role permissions are evaluated.
 
 ## Step 6
 
-Role-based routing occurs.
+Protected access is granted.
 
 ---
 
-# 5. Face Registration Process
+# 5. User Management Module
 
-## Purpose
+Responsibilities:
 
-Create employee facial dataset.
+* User Registration
+* Account Management
+* User Verification
+* Role Assignment
 
-### Workflow
+---
 
-1. Open camera.
-2. Capture multiple facial samples.
-3. Store images.
-4. Generate dataset.
-5. Train recognizer.
+# 6. Event Management Module
 
-### Output
+Responsibilities:
+
+* Event Creation
+* Event Editing
+* Event Publication
+* Event Scheduling
+* Event Monitoring
+
+---
+
+# 7. Verification Module
+
+Responsibilities:
+
+* Email Verification
+* OTP Verification
+* Access Validation
+* Session Validation
+
+Workflow:
 
 ```text
-dataset/
-trained_model.yml
+Login
+  │
+  ▼
+Email Verification
+  │
+  ▼
+OTP Verification
+  │
+  ▼
+Role Verification
+  │
+  ▼
+Access Approval
 ```
 
 ---
 
-# 6. Face Verification Process
+# 8. Access Control Module
 
-## Purpose
+The system follows Role-Based Access Control (RBAC).
 
-Validate employee identity.
+Permissions are assigned according to:
 
-### Workflow
-
-1. Start camera.
-2. Detect face.
-3. Extract features.
-4. Compare with trained model.
-5. Determine confidence score.
-6. Approve or reject verification.
+* User Role
+* Verification Status
+* Event Assignment
+* Access Expiry
 
 ---
 
-# 7. Attendance Workflow
+# 9. Dashboard Module
 
-```text
-Verify Identity
-      │
-      ▼
-Check Attendance Status
-      │
-      ▼
-Create Attendance Record
-      │
-      ▼
-Update Dashboard
-```
+## Administrator Dashboard
+
+Features:
+
+* User Overview
+* Event Overview
+* Verification Statistics
+* Audit Logs
+
+## Event Manager Dashboard
+
+Features:
+
+* Event Monitoring
+* Participant Management
+* Access Tracking
+
+## Line Manager Dashboard
+
+Features:
+
+* Approval Queue
+* Participant Review
+* Verification Monitoring
+
+## User Dashboard
+
+Features:
+
+* Event Access
+* Resource Downloads
+* Profile Management
 
 ---
 
-# 8. Database Design
+# 10. Database Design
 
 ## users
 
-| Field          | Type    |
-| -------------- | ------- |
-| id             | INT     |
-| name           | VARCHAR |
-| mobile         | VARCHAR |
-| role           | VARCHAR |
-| dataset_exists | TINYINT |
+| Field    | Type    |
+| -------- | ------- |
+| id       | INT     |
+| name     | VARCHAR |
+| email    | VARCHAR |
+| password | VARCHAR |
+| role     | VARCHAR |
+| status   | VARCHAR |
 
 ---
 
-## attendance
+## events
 
-| Field     | Type     |
-| --------- | -------- |
-| id        | INT      |
-| user_id   | INT      |
-| check_in  | DATETIME |
-| check_out | DATETIME |
-| status    | VARCHAR  |
+| Field       | Type     |
+| ----------- | -------- |
+| id          | INT      |
+| title       | VARCHAR  |
+| description | TEXT     |
+| start_date  | DATETIME |
+| end_date    | DATETIME |
+
+---
+
+## event_access
+
+| Field         | Type    |
+| ------------- | ------- |
+| id            | INT     |
+| user_id       | INT     |
+| event_id      | INT     |
+| access_status | VARCHAR |
 
 ---
 
@@ -168,142 +226,98 @@ Update Dashboard
 
 ---
 
-# 9. Core Components
+## audit_logs
 
-## PHP Layer
-
-Responsibilities:
-
-* Authentication
-* Session Management
-* Routing
-* Database Operations
-* Dashboard Rendering
+| Field     | Type |
+| --------- | ---- |
+| id        | INT  |
+| user_id   | INT  |
+| action    |      |
+| timestamp |      |
 
 ---
 
-## Python Layer
+# 11. Security Design
 
-Responsibilities:
+## Authentication Security
 
-* Face Detection
-* Face Recognition
-* Dataset Training
-* Verification Service
+* Password Hashing
+* Session Protection
+* Login Validation
 
----
+## Verification Security
 
-## MySQL Layer
-
-Responsibilities:
-
-* Persistent Storage
-* Attendance Records
-* Employee Information
-* Audit Data
-
----
-
-# 10. Security Design
-
-## OTP Security
-
+* OTP Expiration
 * OTP Hashing
-* Expiration Control
 * Verification Limits
-
-## Session Security
-
-* Session Validation
-* Session Regeneration
-* Access Restrictions
 
 ## Database Security
 
 * Prepared Statements
 * Input Sanitization
-* Parameter Binding
+* Access Restrictions
 
 ---
 
-# 11. Error Handling
+# 12. Audit Logging
 
-Common Scenarios
+The platform records:
 
-### OTP Failure
+* Login Activities
+* Verification Attempts
+* Event Access Requests
+* Administrative Actions
 
-* Invalid OTP
-* Expired OTP
-* SMS Delivery Failure
-
-### Face Recognition Failure
-
-* No Face Detected
-* Multiple Faces Detected
-* Confidence Too Low
-
-### System Failure
-
-* Database Unavailable
-* Python Service Offline
-* Network Failure
+This enables full traceability of user activities.
 
 ---
 
-# 12. Deployment Guide
+# 13. Deployment Requirements
 
-## Production Requirements
+## Server
 
-### Server
-
-* Linux VPS
-* Apache/Nginx
+* Apache
 * PHP 8+
-* Python 3.10+
 * MySQL 8+
 
-### SSL
+## Development Environment
 
-HTTPS is mandatory.
+* XAMPP
 
----
+## Production Environment
 
-# 13. Maintenance
-
-Regular Tasks
-
-* Database Backup
-* Model Retraining
-* Attendance Archive
-* Security Updates
-* Log Monitoring
+* Linux Server
+* SSL Certificate
+* Firewall Protection
 
 ---
 
-# 14. Future Roadmap
+# 14. Maintenance
 
-Phase 1
+Regular maintenance includes:
 
-* Complete OTP Integration
+* Database Backups
+* Security Patch Updates
+* Access Log Review
+* Performance Monitoring
 
-Phase 2
+---
 
-* Complete Face Recognition
+# 15. Future Scope
 
-Phase 3
+Future enhancements may include:
 
-* Attendance Analytics
-
-Phase 4
-
+* Face Verification
+* QR Code Event Entry
 * Mobile Application
-
-Phase 5
-
+* AI-Based Fraud Detection
 * Cloud Infrastructure
+* Real-Time Notifications
 
 ---
 
-# 15. Conclusion
+# 16. Conclusion
 
-The ESD platform provides a secure, scalable, and reliable employee attendance ecosystem using modern authentication techniques, biometric verification, and centralized management.
+The Secure VIP Event Management & Access Control Platform provides a robust framework for managing high-security events through layered authentication, role-based authorization, and controlled access mechanisms. The platform ensures secure event participation while maintaining administrative efficiency and accountability.
+
+Developed under the Entrepreneurship Skill Development (ESD) academic program.

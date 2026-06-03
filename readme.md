@@ -1,298 +1,281 @@
-# ESD - Employee Smart Detection & Attendance Management System
+# Secure VIP Event Management & Access Control Platform
 
-## Overview
+## Project Overview
 
-ESD (Employee Smart Detection) is a secure attendance and employee verification platform that combines facial recognition, OTP verification, and role-based access control to streamline attendance tracking and workforce management.
+The Secure VIP Event Management & Access Control Platform is a web-based system designed to manage high-profile events that require strict participant verification, controlled access, and secure resource distribution.
 
-The system is designed to prevent proxy attendance, improve security, and provide a centralized dashboard for administrators, managers, and employees.
+The platform provides a multi-layer authentication and verification workflow to ensure that only authorized individuals can access event information, VIP resources, event listings, schedules, and restricted content.
+
+The system is intended for organizations, institutions, and event coordinators who need enhanced security for managing guests, delegates, speakers, VIP attendees, staff, and administrators.
 
 ---
 
-## Key Features
+# Problem Statement
 
-### Authentication & Security
+Traditional event management systems typically rely on a single login mechanism, making them vulnerable to unauthorized access, credential sharing, and security breaches.
 
-* Mobile Number Verification using OTP
-* SMS Delivery via Twilio
-* Secure Session Management
-* Role-Based Access Control (RBAC)
-* Multi-Level Authentication Flow
+This platform addresses these challenges by introducing multiple layers of verification, role-based permissions, and controlled access mechanisms.
 
-### Face Recognition
+---
 
-* Employee Face Registration
-* Face Dataset Capture
-* LBPH Face Recognition
-* Real-Time Face Verification
-* Secure Attendance Validation
+# Key Features
 
-### Attendance Management
+## User Authentication
 
-* Employee Check-In
-* Employee Check-Out
-* Attendance History
-* Attendance Status Tracking
-* Daily Attendance Reports
+* Secure Login System
+* Session Management
+* Password Protection
+* Role-Based Access Control
 
-### Dashboard Modules
+## Verification Layers
 
-* Employee Dashboard
-* Manager Dashboard
+* Email Verification
+* OTP Verification
+* Multi-Step Access Validation
+* Secure Access Expiry Controls
+
+## Event Management
+
+* Create Events
+* Edit Events
+* Publish Events
+* Manage Event Information
+* Event Scheduling
+
+## Invitation Management
+
+* Invite Participants
+* Participant Verification
+* Approval Workflows
+* Access Assignment
+
+## VIP Access Portal
+
+* Restricted Event Listings
+* Secure Resource Access
+* Protected Downloads
+* Event Information Distribution
+
+## Administrative Features
+
+* User Management
+* Event Management
+* Verification Monitoring
+* Activity Tracking
+* Audit Logs
+
+## Dashboard Features
+
 * Administrator Dashboard
-* Attendance Monitoring
-* Employee Management
-
-### Data Management
-
-* MySQL Database Integration
-* Attendance Records
-* Employee Profiles
-* Face Dataset Management
-* Audit Logging
+* Event Manager Dashboard
+* Line Manager Dashboard
+* User Dashboard
 
 ---
 
-## Technology Stack
+# User Roles
 
-### Frontend
+## Super Administrator
+
+Responsible for complete platform management.
+
+Permissions:
+
+* Manage all users
+* Manage all events
+* Configure platform settings
+* Access audit logs
+
+---
+
+## Event Administrator
+
+Responsible for operational event management.
+
+Permissions:
+
+* Create events
+* Manage attendees
+* Verify registrations
+* View reports
+
+---
+
+## Event Manager
+
+Responsible for event execution and participant management.
+
+Permissions:
+
+* Manage assigned events
+* Review participant information
+* Monitor access activities
+
+---
+
+## Line Manager
+
+Responsible for reviewing and approving assigned participants.
+
+Permissions:
+
+* Review participant requests
+* Approve access permissions
+* Monitor assigned users
+
+---
+
+## VIP Attendee
+
+Permissions:
+
+* Access approved events
+* View event resources
+* Download authorized materials
+
+---
+
+# Security Architecture
+
+The platform follows a layered security approach:
+
+User Login
+↓
+Credential Verification
+↓
+Email Validation
+↓
+OTP Verification
+↓
+Role Authorization
+↓
+Access Validation
+↓
+Protected Resource Access
+
+This architecture significantly reduces the risk of unauthorized access.
+
+---
+
+# Technology Stack
+
+## Frontend
 
 * HTML5
 * CSS3
 * JavaScript
 * Bootstrap
 
-### Backend
+## Backend
 
 * PHP
-* Python (Face Recognition Service)
 
-### Database
+## Database
 
 * MySQL
 
-### Authentication
+## Authentication Services
 
-* Twilio OTP Service
-* PHP Sessions
+* Twilio OTP
 
-### Face Recognition
-
-* OpenCV
-* LBPH Face Recognizer
-* NumPy
-
-### Development Environment
+## Development Environment
 
 * XAMPP
-* Python 3.x
 
 ---
 
-## Project Structure
+# Installation
+
+## Clone Repository
+
+```bash
+git clone https://github.com/your-organization/vip-event-platform.git
+```
+
+## Configure Environment
+
+Place project inside:
 
 ```text
-ESD/
-│
-├── auth/
-│   ├── login.php
-│   ├── otp.php
-│   ├── verify_otp.php
-│   └── auth_router.php
-│
-├── employee/
-│   ├── dashboard.php
-│   ├── attendance.php
-│   └── profile.php
+xampp/htdocs/vip-event-platform
+```
+
+## Create Database
+
+```sql
+CREATE DATABASE vip_event_platform;
+```
+
+## Import Database
+
+Import the SQL file located in:
+
+```text
+/database/vip_event_platform.sql
+```
+
+## Configure Database
+
+Update database credentials in:
+
+```text
+/config/db.php
+```
+
+---
+
+# Running the Project
+
+1. Start Apache.
+2. Start MySQL.
+3. Open browser.
+
+```text
+http://localhost/vip-event-platform
+```
+
+---
+
+# Project Structure
+
+```text
+project/
 │
 ├── admin/
-│   ├── dashboard.php
-│   ├── users.php
-│   └── reports.php
-│
-├── face_recognition/
-│   ├── capture_face.php
-│   ├── face_verify.php
-│   ├── train_model.py
-│   ├── recognize.py
-│   └── server.py
-│
+├── event-manager/
+├── line-manager/
+├── user/
+├── auth/
 ├── assets/
 │   ├── css/
 │   ├── js/
 │   └── images/
 │
-├── vendor/
+├── uploads/
+├── config/
+├── database/
+├── includes/
 │
-├── db.php
 ├── index.php
 └── README.md
 ```
 
 ---
 
-## Installation
+# Future Enhancements
 
-### Clone Repository
-
-```bash
-git clone https://github.com/your-repository/esd.git
-```
-
-### Configure XAMPP
-
-Move project to:
-
-```text
-xampp/htdocs/esd
-```
-
-### Install PHP Dependencies
-
-```bash
-composer install
-```
-
-### Install Python Dependencies
-
-```bash
-pip install opencv-python
-pip install numpy
-pip install flask
-pip install pillow
-```
-
-### Configure Environment
-
-Create:
-
-```text
-.env
-```
-
-Add:
-
-```env
-TWILIO_ACCOUNT_SID=YOUR_SID
-TWILIO_AUTH_TOKEN=YOUR_TOKEN
-TWILIO_PHONE_NUMBER=YOUR_NUMBER
-```
-
----
-
-## Database Setup
-
-Create database:
-
-```sql
-CREATE DATABASE vips;
-```
-
-Import:
-
-```text
-database/esd.sql
-```
-
-Update:
-
-```php
-db.php
-```
-
-with database credentials.
-
----
-
-## Running the Application
-
-### Start Apache & MySQL
-
-Using XAMPP Control Panel.
-
-### Start Face Recognition Server
-
-```bash
-python server.py
-```
-
-### Open Application
-
-```text
-http://localhost/esd
-```
-
----
-
-## Authentication Flow
-
-1. User enters mobile number.
-2. OTP is sent via Twilio.
-3. OTP is verified.
-4. User role is identified.
-5. Dataset existence is checked.
-6. If dataset exists:
-
-   * Redirect to Face Verification.
-7. If dataset does not exist:
-
-   * Redirect to Face Registration.
-8. Attendance is marked upon successful verification.
-
----
-
-## User Roles
-
-### Employee
-
-* Check In
-* Check Out
-* View Attendance
-* Manage Profile
-
-### Manager
-
-* Team Monitoring
-* Attendance Review
-* Team Reports
-
-### Administrator
-
-* User Management
-* Attendance Oversight
-* System Configuration
-* Reporting
-
----
-
-## Security Features
-
-* OTP Verification
-* Session Protection
-* Face Recognition Validation
-* Role-Based Access Control
-* Secure Database Access
-* Input Validation
-* SQL Injection Protection
-
----
-
-## Future Enhancements
-
-* Face Anti-Spoofing
-* GPS Verification
-* Email Notifications
+* Facial Verification
+* QR-Based Entry Validation
+* Event Check-In System
 * Mobile Application
-* AI Attendance Analytics
+* Push Notifications
+* AI-Based Risk Detection
 * Cloud Deployment
 
 ---
 
-## Contributors
+# License
 
-ESD Development Team
+Academic Project
 
----
-
-## License
-
-Internal Project / Educational Use
+Developed as part of the Entrepreneurship Skill Development (ESD) curriculum.
