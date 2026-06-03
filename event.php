@@ -42,7 +42,7 @@ $event = $conn->query("
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>OnlyYou | Event Ticket</title>
-
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;650;700;750;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/bootstrap.min.css">
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="css/auth.css">
@@ -55,11 +55,6 @@ $event = $conn->query("
 <section class="ticket-page">
 
     <div class="ticket-container">
-
-       
-    </div>
-
-        <!-- MAIN TICKET -->
 
         <div class="event-ticket">
 
@@ -107,106 +102,141 @@ $event = $conn->query("
                             </strong>
                         </div>
 
+                        <div class="ticket-actions">
+
+                                <a
+                                    href="index.php"
+                                    class="btn-ticket btn-secondary"
+                                >
+
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+
+                                    <path
+                                        d="M15 18L9 12L15 6"
+                                        stroke="currentColor"
+                                        stroke-width="2"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"/>
+
+                                </svg>
+
+                                Back to Events
+
+                                </a>
+                        </div>
                     </div>
 
                 </div>
 
             </div>
 
-
             <!-- RIGHT -->
 
             <div class="ticket-qr">
 
                 <div class="qr-frame">
-
-                    <img
-                        src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=ONLYYOU-TICKET-<?= urlencode($user_id.'-'.$user_name) ?>"
-                    >
-
+                    <div id="qr-code"></div>
                 </div>
 
                 <div class="ticket-id-box">
 
-    <span class="ticket-id-label">
-        Ticket ID
-    </span>
+                    <span class="ticket-id-label">
+                        Ticket ID
+                    </span>
 
-    <span class="ticket-id-value">
+                    <span class="ticket-id-value">
 
-        <span class="ticket-prefix">
-            ONLYYOU-
-        </span>
+                        <span class="ticket-prefix">
+                            ONLYYOU -
+                        </span>
 
-        <span class="ticket-number">
-            <?= str_pad($user_id,5,'0',STR_PAD_LEFT) ?>
-        </span>
+                        <span class="ticket-number">
+                            <?= str_pad($user_id,5,'0',STR_PAD_LEFT) ?>
+                        </span>
 
-    </span>
+                    </span>
 
-</div>
+                </div>
 
                 <div class="ticket-actions">
 
-            <button
-    onclick="window.print()"
-    class="btn-ticket"
->
+                    <button
+                        onclick="window.print()"
+                        class="btn-ticket"
+                        style="margin-top:10px"
+                    >
 
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
 
-        <path
-            d="M6 9V3H18V9"
-            stroke="currentColor"
-            stroke-width="2"/>
+                            <path
+                                d="M6 9V3H18V9"
+                                stroke="currentColor"
+                                stroke-width="2"/>
 
-        <path
-            d="M6 14H18V21H6V14Z"
-            stroke="currentColor"
-            stroke-width="2"/>
+                            <path
+                                d="M6 14H18V21H6V14Z"
+                                stroke="currentColor"
+                                stroke-width="2"/>
 
-        <path
-            d="M4 9H20C21.1 9 22 9.9 22 11V16C22 17.1 21.1 18 20 18H18"
-            stroke="currentColor"
-            stroke-width="2"/>
+                            <path
+                                d="M4 9H20C21.1 9 22 9.9 22 11V16C22 17.1 21.1 18 20 18H18"
+                                stroke="currentColor"
+                                stroke-width="2"/>
 
-    </svg>
+                        </svg>
 
-    Print Ticket
+                        Print Ticket
 
-</button>
+                    </button>
 
-            <a
-    href="index.php"
-    class="btn-ticket btn-secondary"
->
+                    
 
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-
-        <path
-            d="M15 18L9 12L15 6"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"/>
-
-    </svg>
-
-    Back to Events
-
-</a>
-
-        </div>
+                </div>
 
             </div>
 
-            
+        </div> <!-- event-ticket -->
 
-        </div>
-
-    </div>
+    </div> <!-- ticket-container -->
 
 </section>
+<script src="https://unpkg.com/qr-code-styling@1.8.3/lib/qr-code-styling.js"></script>
+<script>
 
+const qrCode = new QRCodeStyling({
+
+    width: 220,
+    height: 220,
+
+    data: "ONLYYOU-TICKET-<?= $user_id ?>-<?= addslashes($user_name) ?>",
+
+    qrOptions: {
+        errorCorrectionLevel: "H"
+    },
+
+    dotsOptions: {
+        color: "#b91c1c",
+        type: "rounded"
+    },
+
+    cornersSquareOptions: {
+        color: "#b91c1c",
+        type: "extra-rounded"
+    },
+
+    cornersDotOptions: {
+        color: "#b91c1c",
+        type: "dot"
+    },
+
+    backgroundOptions: {
+        color: "#ffffff"
+    }
+
+});
+
+qrCode.append(document.getElementById("qr-code"));
+
+</script>
 </body>
 </html>

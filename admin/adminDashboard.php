@@ -58,7 +58,7 @@ canvas{max-height:320px}
 <div>Analytics</div>
 <div>Reports</div>
 <div>Settings</div>
-<div><a href="logout.php" style="color: inherit;
+<div><a href="../logout.php" style="color: inherit;
     text-decoration: none;
     display: flex;
     align-items: center;

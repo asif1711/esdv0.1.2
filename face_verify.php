@@ -407,7 +407,6 @@ if (!isset($_SESSION['user_id'])) {
         }
 
     </style>
-
 </head>
 
 <body>

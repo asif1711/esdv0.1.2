@@ -90,11 +90,11 @@ if (
     <div class="hero-featured__overlay" style="min-width: 800px;">
       <span class="event-time">AUG 20 • 6:00 PM</span>
 
-      <h1>Design Systems for Scale</h1>
-      <p>With Adam Cooper, Lead Product Designer</p>
+      <h1 style="font-family:'Inter',sans-serif;">Design Systems for Scale</h1>
+      <p style="font-family:'Inter',sans-serif;">With Adam Cooper, Lead Product Designer</p>
 
       <a href="event.php" class="btn-primary">
-        <span class="btn-text">Access Ticket</span>
+        <span class="btn-text" style="font-family:'Inter',sans-serif;">Access Ticket</span>
         <span class="btn-edge-icon">
             <img src="img/arrow-2.svg" alt="">
         </span>
@@ -108,17 +108,17 @@ if (
 
     <div class="thumb active">
       <img src="img/events/1.jpg">
-      <span>Design Systems</span>
+      <span style="font-family:'Inter',sans-serif;">Design Systems</span>
     </div>
 
     <div class="thumb">
       <img src="img/events/2.webp">
-      <span>Startup Meetup</span>
+      <span style="font-family:'Inter',sans-serif;">Startup Meetup</span>
     </div>
 
     <div class="thumb">
       <img src="img/events/3.webp">
-      <span>Security Summit</span>
+      <span style="font-family:'Inter',sans-serif;">Security Summit</span>
     </div>
 
   </div>
@@ -129,26 +129,26 @@ if (
     <section class="dashboard-preview">
   <div class="container">
 
-    <h2>Quick Access</h2>
+    <h2 style="font-family:'Inter',sans-serif;">Quick Access</h2>
 
     <div class="dashboard-grid">
 
       <div class="dashboard-card">
-        <h3>Events</h3>
-        <p>Access and manage all events</p>
-        <a href="event.php">Open →</a>
+        <h3 style="font-family:'Inter',sans-serif;">Events</h3>
+        <p style="font-family:'Inter',sans-serif;">Access and manage all events</p>
+        <a href="event.php" style="font-family:'Inter',sans-serif;">Open →</a>
       </div>
 
       <div class="dashboard-card">
-        <h3>Profile</h3>
-        <p>Manage your account settings</p>
-        <a href="#">Open →</a>
+        <h3 style="font-family:'Inter',sans-serif;">Profile</h3>
+        <p style="font-family:'Inter',sans-serif;">Manage your account settings</p>
+        <a href="#" style="font-family:'Inter',sans-serif;">Open →</a>
       </div>
 
       <div class="dashboard-card">
-        <h3>Security</h3>
-        <p>Control access and permissions</p>
-        <a href="#">Open →</a>
+        <h3 style="font-family:'Inter',sans-serif;">Security</h3>
+        <p style="font-family:'Inter',sans-serif;">Control access and permissions</p>
+        <a href="#" style="font-family:'Inter',sans-serif;">Open →</a>
       </div>
 
     </div>
